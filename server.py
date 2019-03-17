@@ -18,7 +18,7 @@ def welcome():
 def search():
     query=request.args.get('q')
     s = Search(using=client)
-    q=Q('multi_match',query=query,fuzziness="0")
+    q=Q('multi_match',query=query,fuzziness="1")
     s=s.query(q)
     count=s.count()
     response = s[0:count].execute()
