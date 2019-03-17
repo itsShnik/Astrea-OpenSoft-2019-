@@ -10,8 +10,12 @@ client = Elasticsearch(hosts=[ES_HOST])
 
 app = Flask(__name__)
 
+@app.route("/")
+def welcome():
+    return ("Server Started")
+
 @app.route("/search")
-def hello():
+def search():
     query=request.args.get('q')
     s = Search(using=client)
     q=Q('multi_match',query=query,fuzziness="0")
