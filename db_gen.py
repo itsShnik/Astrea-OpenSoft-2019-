@@ -7,7 +7,7 @@ def connect(filename, indexname, doc_type):
     es = Elasticsearch(hosts=[ES_HOST])
     INDEX_NAME = indexname
     try:
-        response = es.indices.create(index=INDEX_NAME)
+        response = es.indices.create(index=INDEX_NAME,body={"settings":{"analysis":{"analyzer":{"default":{"type":"english"}}}}})
     except exceptions.RequestError:
         print("Index Already Created")
         return
