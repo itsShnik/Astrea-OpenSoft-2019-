@@ -12,10 +12,12 @@ for char in letters:
         response = requests.get(url.format(char,num))
         soup = BeautifulSoup(response.text,"html.parser")
         temp = soup.find_all("a",{"rel":"bookmark"})
-        try:
+        if(len(temp)>0):
             for i in temp:
                 keywords.write(i.text+"\n")
-        except:
+                meaning=i.find_next("article")
+                print("{} : {}".format(i.text,meaning.text))
+        else:
             break
         num=num+1
 
