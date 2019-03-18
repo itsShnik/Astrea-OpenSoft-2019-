@@ -14,8 +14,8 @@ for char in letters:
         temp = soup.find_all("a",{"rel":"bookmark"})
         if(len(temp)>0):
             for i in temp:
-                keywords.write(i.text+"\n")
                 meaning=i.find_next("article")
+                keywords.write("{} : {}".format(i.text,meaning.text))
                 print("{} : {}".format(i.text,meaning.text))
         else:
             break
