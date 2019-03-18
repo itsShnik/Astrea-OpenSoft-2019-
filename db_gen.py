@@ -16,7 +16,7 @@ def connect(filename, indexname, doc_type):
     lists = db.readlines()
     i=1
     for line in lists:
-        body = ast.literal_eval(line[2:-2])
+        body = ast.literal_eval(line)
         resp = es.index(index=INDEX_NAME,doc_type=doc_type,body=body,id=i)
         i=i+1
         print(resp)
