@@ -18,13 +18,13 @@ def welcome():
 def search():
     query=request.args.get('q')
     s = Search(using=client)
-    q1=Q('multi_match',query=query,fuzziness="1")
+    q_base=Q('multi_match',query=query,fuzziness="1")
     should =[]
-    should.append(q1)
+    should.append(q_base)
     judge = request.args.get('judge')
     if(judge is not None):
-        q2 = Q('multi_match',query=judge,fields=['Judge'])
-        should.append(q2)
+        q_judge = Q('multi_match',query=judge,fields=['Judge'])
+        should.append(q_judge)
     q = Q('bool',should=should,minimum_should_match=len(should))
     s=s.query(q)
     count=s.count()
