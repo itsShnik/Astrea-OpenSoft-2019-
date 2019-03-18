@@ -18,7 +18,7 @@ def welcome():
 def search():
     query=request.args.get('q')
     s = Search(using=client)
-    q_base=Q('multi_match',query=query,fuzziness="1")
+    q_base=Q('multi_match',query=query,fuzziness="1",prefix_length=3)
     should =[]
     should.append(q_base)
     judge = request.args.get('judge')
