@@ -20,6 +20,8 @@ def search():
     judge=request.args.get('judge')
     category=request.args.get('category')
     acts=request.args.get('acts')
+    date_from = request.args.get('from')
+    date_to = request.args.get('to')
     s = Search(using=client)
     should =[]
     if(query is not None):
@@ -35,6 +37,15 @@ def search():
     if(category is not None):
         q_category = Q('multi_match',query=category,fields=['Judge'])
         should.append(q_category)
+    if(date_from is not None and date_to is not None):
+        q_date = Q('range',fields=['Date'],gte=date_from,lte=date_to,format="yyyy/MM/dd")
+        should.append(q_date)
+    if(date_from is None and date_to is not None):
+        q_date = Q('range',fields=['Date'],gte="1940/01/01",lte=date_to,format="yyyy/MM/dd")
+        should.append(q_date)
+    if(date_from is not None and date_to is not None):
+        q_date = Q('range',fields=['Date'],gte=date_from,lte="now",format="yyyy/MM/dd")
+        should.append(q_date)
     q = Q('bool',should=should,minimum_should_match=len(should))
     s=s.query(q)
     count=s.count()
