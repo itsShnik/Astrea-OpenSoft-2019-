@@ -2,6 +2,9 @@ from elasticsearch import Elasticsearch,exceptions
 import ast
 import sys
 
+
+#usage >  python db_gen.py EXTRACTED_1000_1500.txt test docs 
+
 def connect(filename, indexname, doc_type):
     ES_HOST   = {"host":"localhost","port":9200}
     es = Elasticsearch(hosts=[ES_HOST])
