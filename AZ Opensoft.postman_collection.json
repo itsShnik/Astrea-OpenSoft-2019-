@@ -1,0 +1,41 @@
+{
+	"variables": [],
+	"info": {
+		"name": "AZ Opensoft",
+		"_postman_id": "1200e710-d294-5a93-5d42-dd7e189edcb0",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Search",
+			"request": {
+				"url": {
+					"raw": "http://localhost:5000/search?q=mahajan",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "mahajan",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Search based on certain parameters"
+			},
+			"response": []
+		}
+	]
+}
