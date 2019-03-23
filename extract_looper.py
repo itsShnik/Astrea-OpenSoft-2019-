@@ -14,6 +14,14 @@ import numpy
 from sumy.summarizers.lex_rank import LexRankSummarizer
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
+import gensim.models as g
+import codecs
+
+model="doc2vec.bin"
+start_alpha=0.01
+infer_epoch=1000
+m = g.Doc2Vec.load(model)
+
 
 FULL_TEXT = 'CaseDocuments/All_FT'
 EXTRACTED_CASES_FILE = 'cases.json'
@@ -246,6 +254,11 @@ def getActs(filename):
 	# print(filename,file=outF)
 	print(c)
 
+def get_vector(txt_):
+	test_docs = txt_.strip().split()
+	test_docs = m.infer_vector(test_docs, alpha=start_alpha, steps=infer_epoch)
+
+	return test_docs
 
 def extract_looper(index_start = 0, index_end = 53211):
 	'''
@@ -274,8 +287,12 @@ def extract_looper(index_start = 0, index_end = 53211):
 		with open(file, 'r') as f:
 			txt = f.readlines()
 		
-		
+		txt_ = ""
+		for i in txt:
+			txt_ = txt_+i
+		# print(type(txt_))
 		idTitleCourt = ID_title_court(file, txt)
+		vector = get_vector(txt_)
 		date = getDate(txt)
 		judgeName = getJudgeName(txt)
 		cit = getCitations(txt)
@@ -304,6 +321,7 @@ def extract_looper(index_start = 0, index_end = 53211):
 
 		document = {
 			"num": index,
+			"vector": vector,
 			"caseid": idTitleCourt[0],
 			"title": idTitleCourt[1],
 			"court": idTitleCourt[2],
