@@ -89,6 +89,10 @@ def getJudgeName(text):
 				if x is None:
 					hack = 1
 				else:
+					if len(x)==0:
+						#print(filename, "Not Present")
+						return ['Not Present', linenum]
+
 					x = re.findall(r'[a-zA-Z][\w|.| |\'|,]+', x[0])
 					
 					if len(x)==0:
