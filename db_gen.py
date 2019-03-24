@@ -10,7 +10,25 @@ def connect(filename, indexname, doc_type):
     es = Elasticsearch(hosts=[ES_HOST])
     INDEX_NAME = indexname
     try:
-        response = es.indices.create(index=INDEX_NAME,body={"settings":{"analysis":{"analyzer":{"default":{"type":"english"}}}}})
+        response = es.indices.create(index=INDEX_NAME,body=
+   { "settings": {
+        "index" : {
+            "analysis" : {
+                "analyzer" : {
+                    "synonym" : {
+                        "tokenizer" : "whitespace",
+                        "filter" : ["synonym"]
+                    }
+                },
+                "filter" : {
+                    "synonym" : {
+                        "type" : "synonym",
+                        "synonyms_path" : "new.txt"
+                    }
+                }
+            }
+        }
+    }})
     except exceptions.RequestError:
         print("Index Already Created")
         return
