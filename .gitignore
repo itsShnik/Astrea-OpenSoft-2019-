@@ -1,5 +1,5 @@
 __pycache__
-*.txt
+# *.txt
 extracted/
 extracted_v/
 *.npy

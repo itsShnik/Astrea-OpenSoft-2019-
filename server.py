@@ -13,6 +13,7 @@ import re
 import os
 
 
+# ES_HOST   = {"host":"206.189.138.208","port":9200}
 ES_HOST   = {"host":"127.0.0.1","port":9200}
 client = Elasticsearch(hosts=[ES_HOST])
 query_ = []
@@ -120,11 +121,11 @@ def search():
     model="doc2vec.bin"
     start_alpha=0.01
     infer_epoch=1000
-    m = g.Doc2Vec.load(model)
-    global query_
-    query_ = query
-    query_ = query_.strip().split()
-    query_ = m.infer_vector(query_, alpha=start_alpha, steps=infer_epoch)
+    # m = g.Doc2Vec.load(model)
+    # global query_
+    # query_ = query
+    # query_ = query_.strip().split()
+    # query_ = m.infer_vector(query_, alpha=start_alpha, steps=infer_epoch)
 
     for i in range(len(response['hits']['hits'])):
     	resp = response['hits']['hits'][i]["_source"]
