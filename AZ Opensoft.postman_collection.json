@@ -11,10 +11,13 @@
 			"name": "Search",
 			"request": {
 				"url": {
-					"raw": "http://localhost:5000/search?q=mahajan",
+					"raw": "http://206.189.138.208:5000/search?q=murder",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"206",
+						"189",
+						"138",
+						"208"
 					],
 					"port": "5000",
 					"path": [
@@ -23,7 +26,7 @@
 					"query": [
 						{
 							"key": "q",
-							"value": "mahajan",
+							"value": "murder",
 							"equals": true,
 							"description": ""
 						}
@@ -34,6 +37,39 @@
 				"header": [],
 				"body": {},
 				"description": "Search based on certain parameters"
+			},
+			"response": []
+		},
+		{
+			"name": "Get file",
+			"request": {
+				"url": {
+					"raw": "http://206.189.138.208:5000/file?caseid=1953_A_1",
+					"protocol": "http",
+					"host": [
+						"206",
+						"189",
+						"138",
+						"208"
+					],
+					"port": "5000",
+					"path": [
+						"file"
+					],
+					"query": [
+						{
+							"key": "caseid",
+							"value": "1953_A_1",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Retrieve a specific file only"
 			},
 			"response": []
 		}

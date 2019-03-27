@@ -13,7 +13,7 @@ import re
 import os
 
 
-ES_HOST   = {"host":"localhost","port":9200}
+ES_HOST   = {"host":"127.0.0.1","port":9200}
 client = Elasticsearch(hosts=[ES_HOST])
 query_ = []
 
@@ -112,8 +112,8 @@ def search():
         should.append(q_date)
     q = Q('bool',should=should,minimum_should_match=len(should))
     s=s.query(q)
-    count=s.count()
-    response = s[0:count].execute()
+    # count=s.count()
+    response = s.execute()
     response= response.to_dict()
     result={}
 

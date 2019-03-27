@@ -1,4 +1,6 @@
 __pycache__
 *.txt
 extracted/
+extracted_v/
 *.npy
+*.pyc
