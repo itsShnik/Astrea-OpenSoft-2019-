@@ -11,12 +11,12 @@ def connect(dirname, indexname, doc_type):
     es = Elasticsearch(hosts=[ES_HOST])
     INDEX_NAME = indexname
     # try:
-    if not es.indices.exists(index="index"):
+    if not es.indices.exists(index=INDEX_NAME):
         response = es.indices.create(index=INDEX_NAME,body={"settings":{"analysis":{"analyzer":{"default":{"type":"english"}}}}})
+        print(response)
     # except exceptions.RequestError:
     #     print("Index Already Created")
     #     return
-    print(response)
     files = os.listdir(FILELOC)
     i=1
     

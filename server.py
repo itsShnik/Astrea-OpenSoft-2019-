@@ -2,7 +2,6 @@ from flask import Flask,request
 from elasticsearch_dsl import Search,Q
 from elasticsearch import Elasticsearch
 import json
-import gensim.models as g
 import codecs
 import numpy as np
 import numpy.linalg as LA
@@ -11,14 +10,21 @@ from finalQueryParser import parse_query
 from subprocess import *
 import re
 import os
-
+import subprocess
 
 # ES_HOST   = {"host":"206.189.138.208","port":9200}
 ES_HOST   = {"host":"127.0.0.1","port":9200}
+# client1 = Elasticsearch(hosts=[ES_HOST],index="test")
+# client2 = Elasticsearch(hosts=[ES_HOST],index="index")
 client = Elasticsearch(hosts=[ES_HOST])
 query_ = []
 
 app = Flask(__name__)
+## CORS
+from flask_cors import CORS, cross_origin
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 @app.route("/")
 def welcome():
@@ -39,59 +45,76 @@ def search():
     date_from = request.args.get('from')
     date_to = request.args.get('to')
 
+    start = request.args.get('pagenum')
+    if start:
+        start = int(start) * 20
+    else:
+        start = 0
     verdict_tokens = []
     legal_tokens = []
     judge_name_tokens = []
     other_tokens = []
-    duration, verdict_tokens, legal_tokens, judge_name_tokens, other_tokens = parse_query(query)
- 
-    legal_other = legal_tokens + other_tokens
-    verdict = ""
-    for i in judge_name_tokens:
-        judge+=" "+i;
-    for i in verdict_tokens:
-        verdict+=" "+i;
+    judge2=""
 
-    print(legal_other)
+    if query is not None:
+     
+        duration, verdict_tokens, legal_tokens, judge_name_tokens, other_tokens = parse_query(query)
+        legal_other = legal_tokens + other_tokens
+        verdict = ""
+        for i in judge_name_tokens:
+            if i is not None:
+                judge2+=" "+i
 
-    # file_object = open('things.txt', "w+")
-    # file_object1 = open('Word2.txt', "w+")
+        for i in verdict_tokens:
+            if i is not None:
+                verdict+=" "+i
 
-    # for i in range(0,len(legal_other)):
-    # 	t = legal_other[i]
-    # 	t = t + '\n'
-    # 	print(t)
-    # 	file_object.write(t)
+        print(legal_other)
 
-    # t='EXIT'
-    # t = t + '\n'
-    # file_object.write(t)    
-    # file_object.close()
-    # file_object = open('things.txt', "r")
-    # call(["./distance" , "vectors.bin"],  stdin = file_object, stdout = file_object1)
+        file_object = open('things.txt', "w+")
+        # file_object1 = open('Word2.txt', "w+")
 
-    # file_object1.close()
+        for i in range(0,len(legal_other)):
+            t = legal_other[i]
+            t = t + '\n'
+            print(t)
+            file_object.write(t)
 
+        t='EXIT'
+        t = t + '\n'
+        file_object.write(t)    
+        file_object.close()
+        # file_object11 = open('things.txt', "r")
+        subprocess.Popen("./distance vectors.bin < things.txt > Word2.txt", shell=True)
+        # call("["./distance" , "vectors.bin"],  stdin = file_object11, stdout = file_object1)
 
-    # file_object2 = open('Word2.txt', "r")
-    # strin = file_object2.read()
+        # file_object1.close()
 
-    # words = re.sub('[^a-zA-Z0-9\n]', ',', strin)
-    # words = list([x for x in set(words.split(',')) if x!=query])
-    # new_str = query + ' '.join(words [ : min(3, len(words))] )
-    
-    # t = file_object1.readlines()
-    # t1 = t[0]
-    # queryNew = ''
-    # for i in range(0, len(t1)-2):
-    # 	queryNew = queryNew + t1[i]
+        with open('Word2.txt', 'r') as f:
+            strin = f.read()
 
-    # print('this'+ new_str)
+        words = re.sub('[^a-zA-Z0-9\n]', ',', strin)
+        words = list([x for x in set(words.split(',')) if x!=query])
+        print(words)
+        new_str = query + ' ' + ' '.join(words [ : min(10,len(words))] )
+        
 
+        # with open('Word2.txt', 'r') as f:
+        #     t = f.readlines()
+        #     t1 = t[0]
+
+        # queryNew = ''
+        # for i in range(0, len(t1)-2):
+        #     queryNew = queryNew + t1[i]
+
+        print('this :: ' + new_str)
+
+    judge = judge if judge is not None else judge2
     s = Search(using=client)
+    allfields = ['content', 'summary', 'judge', 'acts', 'title', 'verdict','keywords', 'appeal', 'verdict', 'subject']
     should =[]
     if(query is not None):
-        q_base=Q('multi_match',query=query,fuzziness="1",prefix_length=3)
+        q_base=Q('multi_match',query=new_str,fuzziness="1",prefix_length=3, fields=allfields)
         should.append(q_base)
     if(judge is not None):
         q_judge = Q('multi_match',query=judge,fields=['judge'])
@@ -103,25 +126,23 @@ def search():
         q_category = Q('multi_match',query=category,fields=['subject'])
         should.append(q_category)
     if(date_from is not None and date_to is not None):
-        q_date = Q('range',fields=['date'],gte=date_from,lte=date_to,format="yyyy/MM/dd")
+        q_date = Q('range',date={'gte':date_from,'lte':date_to,'format':"yyyy/MM/dd"})
         should.append(q_date)
-    if(date_from is None and date_to is not None):
-        q_date = Q('range',fields=['date'],gte="1940/01/01",lte=date_to,format="yyyy/MM/dd")
-        should.append(q_date)
-    if(date_from is not None and date_to is not None):
-        q_date = Q('range',fields=['date'],gte=date_from,lte="now",format="yyyy/MM/dd")
-        should.append(q_date)
+    # if(date_from is None and date_to is not None):
+    #     q_date = Q('range',fields=['date'],gte="1940/01/01",lte=date_to,format="yyyy/MM/dd")
+    #     should.append(q_date)
+    # if(date_from is not None and date_to is not None):
+    #     q_date = Q('range',fields=['date'],gte=date_from,lte="now",format="yyyy/MM/dd")
+    #     should.append(q_date)
     q = Q('bool',should=should,minimum_should_match=len(should))
+    print(q)
     s=s.query(q)
-    # count=s.count()
-    response = s.execute()
+    count=s.count()
+    end = start + 20
+    response = s[start:min(end, count)].execute()
     response= response.to_dict()
     result={}
 
-    model="doc2vec.bin"
-    start_alpha=0.01
-    infer_epoch=1000
-    # m = g.Doc2Vec.load(model)
     # global query_
     # query_ = query
     # query_ = query_.strip().split()
@@ -132,6 +153,7 @@ def search():
     	resp['score']=response['hits']['hits'][i]["_score"]
     	result[str(i)]=resp
 
+    result['count'] = count
     # result_ = result.values()
     # result_ = sorted(result_, key=functools.cmp_to_key(compare))
     # result = {}
@@ -144,7 +166,7 @@ def search():
 def get_file():
     caseid=request.args.get('caseid')
     s=Search(using=client)
-    q = Q('match',query=caseid,fields=['caseid'])
+    q = Q('multi_match',query=caseid,fields=['caseid'])
     s=s.query(q)
     count=s.count()
     response = s[0:count].execute()
@@ -155,6 +177,24 @@ def get_file():
         resp['score']=response['hits']['hits'][i]["_score"]
         result[str(i)]=resp
     return json.dumps(result)
+
+
+@app.route("/act")
+def get_act():
+    actid=request.args.get('actid')
+    s=Search(using=client)
+    q = Q('multi_match',query=actid,fields=['actid'])
+    s=s.query(q)
+    count=s.count()
+    response = s[0:count].execute()
+    response= response.to_dict()
+    result={}
+    for i in range(len(response['hits']['hits'])):
+        resp = response['hits']['hits'][i]["_source"]
+        resp['score']=response['hits']['hits'][i]["_score"]
+        result[str(i)]=resp
+    return json.dumps(result)
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
