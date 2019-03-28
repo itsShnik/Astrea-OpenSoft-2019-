@@ -5,3 +5,4 @@ extracted_v/
 *.npy
 *.pyc
 *.bin
+extracted_acts.txt
