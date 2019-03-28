@@ -19,7 +19,7 @@ client = Elasticsearch(hosts=[ES_HOST])
 s = Search(using=client)
 ubq = UpdateByQuery(using=client)
 
-start = 0
+start = 8811
 x = ""
 for i in range(start, len(files)):
 	file = files[i]
