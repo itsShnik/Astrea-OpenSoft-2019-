@@ -4,3 +4,4 @@ extracted/
 extracted_v/
 *.npy
 *.pyc
+*.bin
