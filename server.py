@@ -117,8 +117,9 @@ def search():
         q_base=Q('multi_match',query=new_str,fuzziness="1",prefix_length=3, fields=allfields)
         should.append(q_base)
     if(judge is not None):
-        q_judge = Q('multi_match',query=judge,fields=['judge'])
-        should.append(q_judge)
+        if(len(judge)>0):
+            q_judge = Q('multi_match',query=judge,fields=['judge'])
+            should.append(q_judge)
     if(acts is not None):
         q_acts = Q('multi_match',query=acts,fields=['acts'])
         should.append(q_acts)
@@ -152,7 +153,7 @@ def search():
     	resp = response['hits']['hits'][i]["_source"]
     	resp['score']=response['hits']['hits'][i]["_score"]
     	result[str(i)]=resp
-
+        resp.pop('content')
     result['count'] = count
     # result_ = result.values()
     # result_ = sorted(result_, key=functools.cmp_to_key(compare))

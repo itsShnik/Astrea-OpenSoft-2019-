@@ -18,6 +18,7 @@ def connect(dirname, indexname, doc_type):
     #     print("Index Already Created")
     #     return
     files = os.listdir(FILELOC)
+    files.sort()
     i=1
     
     for file in files:
