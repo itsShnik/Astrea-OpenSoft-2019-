@@ -3,5 +3,5 @@ elasticsearch_dsl==6.3.1
 spellchecker==0.4
 gensim==3.7.1
 Flask==1.0.2
-nltk==3.4
+nltk==3.4.5
 elasticsearch==6.3.1
