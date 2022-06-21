@@ -1,4 +1,4 @@
-numpy==1.16.2
+numpy==1.22.0
 elasticsearch_dsl==6.3.1
 spellchecker==0.4
 gensim==3.7.1
